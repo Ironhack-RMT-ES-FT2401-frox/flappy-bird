@@ -14,15 +14,20 @@ class Game {
     this.obstaculosArr = []
     this.obstauloAppearFrequency = 1500
 
+    this.gameIntervalId; // vacio al inicio. Se almacena luego el Id cuando empieza el intervalo
+    this.obstacleAppearIntervalId;
+
   }
 
 
   // aqui estarán todos los métodos (acciones) del juego
 
+
+  // los tubos aparezcan y desaparecen (spawning) ✅
   obstaclesAppearLoop() {
 
     // creamos un intervalo, que indique que cada segundo, se añade un nuevo obstaculo
-    setInterval(() => {
+    this.obstacleAppearIntervalId = setInterval(() => {
       this.obstacleAppear()
     }, this.obstauloAppearFrequency)
 
@@ -40,6 +45,53 @@ class Game {
     console.log(this.obstaculosArr.length)
   }
 
+  // colisiones del pollito contra los tubos ✅
+  collitionCheckPollitoObstaculos() {
+
+    this.obstaculosArr.forEach((eachObstaculoObj) => {
+      
+      // necesitamos el pollito => this.pollitoObj
+      // necesitamos cada uno de los obstaculos => eachObstaculoObj
+      if (
+        this.pollitoObj.x < eachObstaculoObj.x + eachObstaculoObj.w &&
+        this.pollitoObj.x + this.pollitoObj.w > eachObstaculoObj.x &&
+        this.pollitoObj.y < eachObstaculoObj.y + eachObstaculoObj.h &&
+        this.pollitoObj.y + this.pollitoObj.h > eachObstaculoObj.y
+      ) {
+        // Collision detected!
+        // console.log("ha colisionado")
+        this.gameOver()
+      } 
+    })
+  }
+
+  gameOver() {
+    // SIEMPRE limpiar todos los intervalos o timeouts de nuestro juego en game over
+    clearInterval(this.gameIntervalId)
+    clearInterval(this.obstacleAppearIntervalId)
+
+    // ocultamos la pagina de juego
+    gameScreenNode.style.display = "none";
+
+    // mostramos la pagina final
+    gameOverScreenNode.style.display = "flex"
+  }
+
+  checkIfObstaculoLeftGameBox() {
+    // verique si un obstaculo ha salido de la pantalla, remuevelo
+
+    if (this.obstaculosArr[0] !== undefined && this.obstaculosArr[0].x < -60) {
+      // si en el array hay al menos un elemento y si ese elemento salió del gamebox por la izquierda
+      // -60 porque es el ancho del obstaculo. Tambien se puede this.obstaculosArr[0].w
+      console.log("obstaculo saliendo")
+
+      // remueve el elemento (REMOVER DEL JS Y REMOVER EL NODO DEL DOM)
+      this.obstaculosArr[0].node.remove() // remueve el elemento del DOM
+      this.obstaculosArr.shift() // eliminalo del array
+
+    }
+
+  }
 
   gameLoop() {
     // esto es para acciones y checkeos automaticos (60 por segundo)
@@ -49,25 +101,20 @@ class Game {
       eachObstaculo.automaticMovement()
     })
 
+    this.collitionCheckPollitoObstaculos()
+    this.checkIfObstaculoLeftGameBox()
+
   }
 
   // el bucle del juego
   start() {
-    window.setInterval(() => {
+    this.gameIntervalId = window.setInterval(() => {
       this.gameLoop()
     }, this.gameIntervalFrequency)
   }
-
-
-
-  
-  // los tubos aparezcan y desaparecen (spawning)
-  // colisiones del pollito contra los tubos
-
-
-  // BONUS
-  // Score
-  // Reiniciar
-
-
 }
+
+
+// BONUS
+// Score
+// Reiniciar

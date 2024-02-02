@@ -22,8 +22,11 @@ class Pollito {
     this.node.style.top = `${this.y}px`
     this.node.style.left = `${this.x}px`
 
+    this.node.style.pointerEvents = "none";
+    // la linea arriba es para evita interactuar con el elemento por error al clickar sobre él
+
     this.gravitySpeed = 2.5
-    this.jumpSpeed = 35
+    this.jumpSpeed = 40
 
   }
 

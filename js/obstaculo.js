@@ -28,7 +28,8 @@ class Obstaculo {
     this.node.style.top = `${this.y}px`
     this.node.style.left = `${this.x}px`
 
-    // this.node.style.draggable = false
+    this.node.style.pointerEvents = "none";
+    // la linea arriba es para evita interactuar con el elemento por error al clickar sobre él
 
     this.speed = 2
 
